@@ -410,9 +410,11 @@ END
              def pattern = /HBASE-[0-9]+/
              echo "pattern (${pattern.class}): ${pattern}"
              echo "eachMatch:"
+             try {
              msg.eachMatch(pattern) {
                echo "	${it}"
              }
+             
              echo "/eachMatch"
              msg.findAll( /HBASE-[0-9]+/ ).each { currentIssue ->
                echo "[DEBUG] found jira key: ${currentIssue}"
@@ -423,6 +425,10 @@ END
                  jiraComment issueKey: currentIssue, body: comment
                  seenJiras << currentIssue
                }
+             }
+             } catch (Exception exception) {
+               echo "Got exception: ${exception}"
+               echo "	${exception.getStackTrace()}"
              }
              //TODO warn if no JIRA key found in message, email committer
            }
